@@ -9,9 +9,11 @@ using Xamarin.Essentials;
 using Android.Widget;
 using System.Text;
 using Android.Support.V4.App;
+using Android.Content;
 
 namespace sCapitaliser_ANDROID
 {
+    [BroadcastReceiver]
     [Activity(Label = "sCapitaliser", ScreenOrientation = Android.Content.PM.ScreenOrientation.Portrait, Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
@@ -20,6 +22,7 @@ namespace sCapitaliser_ANDROID
         public readonly string CHANNEL_ID = "sCapitaliser";
         static readonly int NOTIFICATION_ID = 1000;
         Notification notification = null;
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -86,8 +89,8 @@ namespace sCapitaliser_ANDROID
                               .SetAutoCancel(false) // Dismiss the notification from the notification area when the user clicks on it
                               .SetContentIntent(resultPendingIntent) // Start up this activity when the user clicks the intent.
                               .SetContentTitle("sCapitaliser") // Set the title
-                              .SetSmallIcon(Resource.Mipmap.ic_scap) // This is the icon to display
-                              .SetContentText("Click to open sCapitaliser");
+                              .SetSmallIcon(Resource.Drawable.ic_mini) // This is the icon to display
+                              .SetContentText("Tap to open sCapitaliser");
 
                 // Finally, publish the notification:
                 notification = builder.Build();
@@ -124,9 +127,9 @@ namespace sCapitaliser_ANDROID
             }
 
             bool capital = !second_letter.Checked;
-            CreateResult(capital, text);
+            CreateResult(capital, text, BaseContext);
         }
-        private async void CreateResult(bool capital, string text)
+        public static async void CreateResult(bool capital, string text, Context BaseContext)
         {
             if(text.Trim() == "")
             {
