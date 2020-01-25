@@ -20,7 +20,7 @@ namespace sCapitaliser_ANDROID
         EditText input_text;
         CheckBox second_letter;
         public readonly string CHANNEL_ID = "sCapitaliser";
-        static readonly int NOTIFICATION_ID = 1000;
+        static readonly int NOTIFICATION_ID = 9517;
         Notification notification = null;
 
         protected override void OnCreate(Bundle savedInstanceState)
@@ -55,7 +55,7 @@ namespace sCapitaliser_ANDROID
             {
                 Description = description
             };
-
+            channel.EnableVibration(false);
             var notificationManager = (NotificationManager)GetSystemService(NotificationService);
             notificationManager.CreateNotificationChannel(channel);
         }
@@ -68,9 +68,17 @@ namespace sCapitaliser_ANDROID
 
         public override bool OnOptionsItemSelected(IMenuItem item)
         {
-            var notificationManager = NotificationManagerCompat.From(this);
             int id = item.ItemId;
-            if (id == Resource.Id.action_settings && notification is null)
+            var notificationManager = (NotificationManager)GetSystemService(NotificationService);
+            bool isActive = false;
+            foreach (var noti in notificationManager.GetActiveNotifications()){
+                if(noti.Id == NOTIFICATION_ID)
+                {
+                    isActive = true;
+                    break;
+                }
+            }
+            if (id == Resource.Id.action_settings && !isActive)
             {
 
                 // When the user clicks the notification, SecondActivity will start up.
@@ -96,13 +104,13 @@ namespace sCapitaliser_ANDROID
                 notification = builder.Build();
                 notification.Flags = NotificationFlags.OngoingEvent;
                 notificationManager.Notify(NOTIFICATION_ID, notification);
+                notificationManager.Dispose();
+                notification.Dispose();
                 
             }
             else
             {
                 notificationManager.Cancel(NOTIFICATION_ID);
-                notification.Dispose();
-                notification = null;
             }
             notificationManager.Dispose();
 
